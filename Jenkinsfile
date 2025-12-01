@@ -18,7 +18,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                bat 'npm run build || echo "no build step"'
+                bat 'echo "No build step, skipping"'
             }
         }
     }
