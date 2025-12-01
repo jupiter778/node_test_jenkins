@@ -1,24 +1,24 @@
 pipeline {
     agent any
     stages {
-        stage('Checkout') {
+        stage('Checkout SCM') {
             steps {
                 checkout scm
             }
         }
         stage('Install') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
         stage('Test') {
             steps {
-                sh 'npm test || echo "no tests"'
+                bat 'npm test || echo "no tests"'
             }
         }
         stage('Build') {
             steps {
-                sh 'npm run build || echo "no build step"'
+                bat 'npm run build || echo "no build step"'
             }
         }
     }
