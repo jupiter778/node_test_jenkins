@@ -21,5 +21,12 @@ pipeline {
                 bat 'echo "No build step, skipping"'
             }
         }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("mynodeapp:latest")
+                }
+            }
+        }
     }
 }
