@@ -1,4 +1,4 @@
-// __tests__/example.test.js
+// __tests__/example.test.js//
 function sum(a, b) {
   return a + b;
 }
