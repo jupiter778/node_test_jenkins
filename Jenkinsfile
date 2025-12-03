@@ -8,7 +8,7 @@ pipeline {
         }
         stage('Pull Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/username/repo.git'
+                git branch: 'main', url: 'https://gitlab.com/meng_gitlab-group/my_project_test.git'
             }
         }
         stage('Install') {
