@@ -6,14 +6,19 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Pull Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/username/repo.git'
+            }
+        }
         stage('Install') {
             steps {
                 bat 'npm install'
             }
         }
-        stage('Test') {
+        stage('Run Tests') {
             steps {
-                bat 'echo "No tests, skipping"'
+                sh 'npm test'
             }
         }
         stage('Build') {
