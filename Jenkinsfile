@@ -1,11 +1,6 @@
 pipeline {
     agent any
     stages {
-        stage('Checkout SCM') {
-            steps {
-                checkout scm
-            }
-        }
         stage('Pull Code') {
             steps {
                 git branch: 'main', url: 'https://gitlab.com/meng_gitlab-group/my_project_test.git'
@@ -34,4 +29,4 @@ pipeline {
             }
         }
     }
-}//ทดสอบ
+}
