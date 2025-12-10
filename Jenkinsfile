@@ -1,30 +1,41 @@
 pipeline {
     agent any
+
+    environment {
+        REPO_URL     = "https://github.com/jupiter778/node_test_jenkins.git"
+        REGISTRY_URL = ""
+        IMAGE_NAME   = ""
+        GITHUB_USERNAME = ""
+        dockerImage  = "${REGISTRY_URL}/${IMAGE_NAME}:latest"
+
+    }
+
     stages {
-        stage('Pull Code') {
+        stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/jupiter778/node_test_jenkins.git'
+                git credentialsId: 'github-token', url: "${REPO_URL}", branch: 'main'
             }
         }
-        stage('Install') {
+
+        stage('Docker Build Release') {
             steps {
-                bat 'npm install'
+               sh """
+               docker build \
+                -t ${dockerImage} \
+                -f services/nest-service/Dockerfile \
+                .
+                """
             }
         }
-        stage('Run Tests') {
+
+        stage('Docker Push') {
             steps {
-                bat 'npm test'
-            }
-        }
-        stage('Build') {
-            steps {
-                bat 'echo "No build step, skipping"'
-            }
-        }
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    docker.build("mynodeapp:latest")
+                echo '------------------------------------------------------------------------------------------------------------'
+                withCredentials([string(credentialsId: 'TakawatP', variable: 'GITHUB_TOKEN')]) {
+                    sh """
+                    echo "\$GITHUB_TOKEN" | docker login ${REGISTRY_URL} -u ${GITHUB_USERNAME} --password-stdin
+                    docker push ${dockerImage}
+                    """
                 }
             }
         }
