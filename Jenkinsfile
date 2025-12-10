@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Pull Code') {
             steps {
-                git branch: 'main', url: 'https://gitlab.com/meng_gitlab-group/my_project_test.git'
+                git branch: 'main', url: 'https://github.com/jupiter778/node_test_jenkins.git'
             }
         }
         stage('Install') {
