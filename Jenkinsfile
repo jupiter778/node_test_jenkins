@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        REPO_URL     = ""
+        REPO_URL     = "https://github.com/username/repo.git"
         REGISTRY_URL = ""
         IMAGE_NAME   = ""
         GITHUB_USERNAME = ""
