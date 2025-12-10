@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+    stages {
+        stage('Pull Code') {
+            steps {
+                git branch: 'main', url: 'https://gitlab.com/meng_gitlab-group/my_project_test.git'
+            }
+        }
+        stage('Install') {
+            steps {
+                bat 'npm install'
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                bat 'npm test'
+            }
+        }
+        stage('Build') {
+            steps {
+                bat 'echo "No build step, skipping"'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("mynodeapp:latest")
+                }
+            }
+        }
+    }
+}
