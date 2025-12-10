@@ -1,44 +1,33 @@
 pipeline {
     agent any
-
-    environment {
-        REPO_URL     = "https://github.com/username/repo.git"
-        REGISTRY_URL = ""
-        IMAGE_NAME   = ""
-        GITHUB_USERNAME = ""
-        dockerImage  = "${REGISTRY_URL}/${IMAGE_NAME}:latest"
-
-    }
-
     stages {
-        stage('Checkout Code') {
+        stage('Pull Code') {
             steps {
-                git credentialsId: 'admin_gitea', url: "${REPO_URL}", branch: 'main'
+                git branch: 'main', url: 'https://gitlab.com/meng_gitlab-group/my_project_test.git'
             }
         }
-
-        stage('Docker Build Release') {
+        stage('Install') {
             steps {
-               sh """
-               docker build \
-                -t ${dockerImage} \
-                -f services/nest-service/Dockerfile \
-                .
-                """
+                bat 'npm install'
             }
         }
-
-        stage('Docker Push') {
+        stage('Run Tests') {
             steps {
-                echo '------------------------------------------------------------------------------------------------------------'
-                withCredentials([string(credentialsId: 'TakawatP', variable: 'GITHUB_TOKEN')]) {
-                    sh """
-                    echo "\$GITHUB_TOKEN" | docker login ${REGISTRY_URL} -u ${GITHUB_USERNAME} --password-stdin
-                    docker push ${dockerImage}
-                    """
+                bat 'npm test'
+            }
+        }
+        stage('Build') {
+            steps {
+                bat 'echo "No build step, skipping"'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("mynodeapp:latest")
                 }
             }
         }
     }
 }
-///
+...22
