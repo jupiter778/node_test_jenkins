@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         REPO_URL     = "https://github.com/jupiter778/node_test_jenkins.git"
-        REGISTRY_URL = ""
-        IMAGE_NAME   = ""
-        GITHUB_USERNAME = ""
+        REGISTRY_URL = "docker.io/cnwsb777"
+        IMAGE_NAME   = "test_docker"
+        GITHUB_USERNAME = "jupiter778"
         dockerImage  = "${REGISTRY_URL}/${IMAGE_NAME}:latest"
 
     }
@@ -22,7 +22,7 @@ pipeline {
                sh """
                docker build \
                 -t ${dockerImage} \
-                -f services/nest-service/Dockerfile \
+                -f D:/node_test_jenkins/node_test_jenkins/Dockerfile 
                 .
                 """
             }
