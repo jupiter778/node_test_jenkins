@@ -31,7 +31,7 @@ pipeline {
         stage('Docker Push') {
             steps {
                 echo '------------------------------------------------------------------------------------------------------------'
-                withCredentials([string(credentialsId: 'TakawatP', variable: 'GITHUB_TOKEN')]) {
+                withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
                     sh """
                     echo "\$GITHUB_TOKEN" | docker login ${REGISTRY_URL} -u ${GITHUB_USERNAME} --password-stdin
                     docker push ${dockerImage}
