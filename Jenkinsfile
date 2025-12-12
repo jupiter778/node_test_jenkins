@@ -32,7 +32,7 @@ pipeline {
             steps {
                 echo '------------------------------------------------------------------------------------------------------------'
                 withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
-                    sh """
+                    bat """
                     echo "\$GITHUB_TOKEN" | docker login ${REGISTRY_URL} -u ${GITHUB_USERNAME} --password-stdin
                     docker push ${dockerImage}
                     """
