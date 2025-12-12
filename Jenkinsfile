@@ -20,8 +20,8 @@ pipeline {
         stage('Docker Build Release') {
             steps {
                bat """
-               docker build \
-                -t ${dockerImage} \
+               docker build ^
+                -t ${dockerImage} ^
                 -f D:/node_test_jenkins/node_test_jenkins/Dockerfile ^ 
                 .
                 """
