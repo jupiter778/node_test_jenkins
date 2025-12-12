@@ -4,7 +4,7 @@ pipeline {
     environment {
         REPO_URL     = "https://github.com/jupiter778/node_test_jenkins.git"
         REGISTRY_URL = "docker.io"
-        IMAGE_NAME   = "cnwsb777/test_repo"
+        IMAGE_NAME   = "cnwsb777/test_docker"
         DOCKER_HUB_USERNAME = "cnwsb777"
         dockerImage  = "${REGISTRY_URL}/${IMAGE_NAME}:latest"
     }
