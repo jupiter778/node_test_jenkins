@@ -26,16 +26,16 @@ pipeline {
             }
         }
 
-       stage('Docker Push') {
-    steps {
-        echo ''
-        withCredentials([string(credentialsId: 'docker-hub-token', variable: 'DOCKER_PASSWORD')]) {
-            bat """
-            docker login -u USERNAME -p PASSWORD
-            docker push ${dockerImage}
-            """
-        }
-    }
+        stage('Docker Push') {
+            steps {
+                echo '--------- Docker Push ---------'
+                withCredentials([string(credentialsId: 'docker-hub-token', variable: 'DOCKER_PASSWORD')]) {
+                    bat """
+                    docker login -u ${DOCKER_HUB_USERNAME} -p %DOCKER_PASSWORD%
+                    docker push ${dockerImage}
+                    """
+                }
+            }
         }
     }
 }
