@@ -27,15 +27,15 @@ pipeline {
         }
 
         stage('Docker Push') {
-            steps {
-                echo '----------------------------------------'
-                withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
-                    bat """
-                    echo %GITHUB_TOKEN% | docker login ${REGISTRY_URL} -u ${GITHUB_USERNAME} --password-stdin
-                    docker push ${dockerImage}
-                    """
-                }
-            }
+    steps {
+        echo '----------------------------------------'
+        withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKER_PASSWORD')]) {
+            bat """
+            echo %DOCKER_PASSWORD% | docker login docker.io -u ${GITHUB_USERNAME} --password-stdin
+            docker push ${dockerImage}
+            """
+        }
+    }
         }
     }
 }
