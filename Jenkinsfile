@@ -7,7 +7,6 @@ pipeline {
         IMAGE_NAME   = "cnwsb777/test_docker"
         GITHUB_USERNAME = "jupiter778"
         dockerImage  = "${REGISTRY_URL}/${IMAGE_NAME}:latest"
-
     }
 
     stages {
@@ -22,18 +21,17 @@ pipeline {
                bat """
                docker build ^
                 -t ${dockerImage} ^
-                -f D:/node_test_jenkins/node_test_jenkins/Dockerfile ^ 
                 .
-                """
+               """
             }
         }
 
         stage('Docker Push') {
             steps {
-                echo '------------------------------------------------------------------------------------------------------------'
+                echo '----------------------------------------'
                 withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
                     bat """
-                    echo "\$GITHUB_TOKEN" | docker login ${REGISTRY_URL} -u ${GITHUB_USERNAME} --password-stdin
+                    echo %GITHUB_TOKEN% | docker login ${REGISTRY_URL} -u ${GITHUB_USERNAME} --password-stdin
                     docker push ${dockerImage}
                     """
                 }
