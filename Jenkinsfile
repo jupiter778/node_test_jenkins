@@ -26,13 +26,15 @@ pipeline {
             }
         }
 
-        stage('Docker Push') {
+       stage('Docker Push') {
             steps {
-                echo '--------- Docker Push ---------'
                 withCredentials([string(credentialsId: 'docker-hub-token', variable: 'DOCKER_PASSWORD')]) {
                     bat """
-                    docker login -u ${DOCKER_HUB_USERNAME} -p %DOCKER_PASSWORD%
-                    docker push ${dockerImage}
+                    echo Logging in to Docker Hub...
+                    docker login -u ${DOCKER_HUB_USER} -p %DOCKER_PASSWORD%
+
+                    echo Pushing image to Docker Hub...
+                    docker push ${DOCKER_REPO}:${DOCKER_TAG}
                     """
                 }
             }
