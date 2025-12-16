@@ -42,7 +42,7 @@ pipeline {
 
         stage('Login to AWS ECR') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'test-aws', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                withCredentials([usernamePassword(credentialsId: 'github-token-aws', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     sh '''
                     echo "Logging in to AWS ECR..."
                     aws ecr get-login-password --region ${AWS_REGION} | \
