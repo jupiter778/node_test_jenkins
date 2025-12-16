@@ -3,10 +3,10 @@ pipeline {
 
     environment {
         REPO_URL           = "https://github.com/jupiter778/node_test_jenkins.git"
-        LOCAL_IMAGE_NAME   = "myapp"                 // ชื่อ image ตอน build ในเครื่อง
-        LOCAL_TAG          = "latest"                // tag ของ local image
-        DOCKER_REPO        = "cnwsb777/test-docker"    // repo บน Docker Hub
-        DOCKER_TAG         = "v1"                    // tag ที่ต้องการ push
+        LOCAL_IMAGE_NAME   = "myapp"
+        LOCAL_TAG          = "latest"
+        DOCKER_REPO        = "cnwsb777/test-docker"
+        DOCKER_TAG         = "v1"
         DOCKER_HUB_USER    = "cnwsb777"
     }
 
@@ -20,32 +20,32 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                bat """
-                echo Building Docker Image...
+                sh '''
+                echo "Building Docker Image..."
                 docker build -t ${LOCAL_IMAGE_NAME}:${LOCAL_TAG} .
-                """
+                '''
             }
         }
 
         stage('Tag Image for Docker Hub') {
             steps {
-                bat """
-                echo Tagging image for Docker Hub...
+                sh '''
+                echo "Tagging image for Docker Hub..."
                 docker tag ${LOCAL_IMAGE_NAME}:${LOCAL_TAG} ${DOCKER_REPO}:${DOCKER_TAG}
-                """
+                '''
             }
         }
 
         stage('Docker Push') {
             steps {
                 withCredentials([string(credentialsId: 'docker-hub-token', variable: 'DOCKER_PASSWORD')]) {
-                    bat """
-                    echo Logging in to Docker Hub...
-                    docker login -u ${DOCKER_HUB_USER} -p %DOCKER_PASSWORD%
+                    sh '''
+                    echo "Logging in to Docker Hub..."
+                    echo "$DOCKER_PASSWORD" | docker login -u ${DOCKER_HUB_USER} --password-stdin
 
-                    echo Pushing image to Docker Hub...
+                    echo "Pushing image to Docker Hub..."
                     docker push ${DOCKER_REPO}:${DOCKER_TAG}
-                    """
+                    '''
                 }
             }
         }
