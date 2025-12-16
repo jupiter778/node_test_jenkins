@@ -2,13 +2,20 @@ pipeline {
     agent any
 
     environment {
-        REPO_URL           = "https://github.com/jupiter778/node_test_jenkins.git"
-        LOCAL_IMAGE_NAME   = "myapp"
-        LOCAL_TAG          = "latest"
-        AWS_ACCOUNT_ID     = "822334816473"
-        AWS_REGION         = "ap-southeast-1"
-        ECR_REPO           = "test-repo"
-        ECR_URI            = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${LOCAL_TAG}"
+        REPO_URL         = "https://github.com/jupiter778/node_test_jenkins.git"
+        LOCAL_IMAGE_NAME = "myapp"
+        LOCAL_TAG        = "latest"
+
+        # AWS ECR
+        AWS_ACCOUNT_ID   = "822334816473"
+        AWS_REGION       = "ap-southeast-1"
+        ECR_REPO         = "test-repo"
+        ECR_URI          = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${LOCAL_TAG}"
+
+        # Docker Hub
+        DOCKER_REPO      = "cnwsb777/test-docker"
+        DOCKER_TAG       = "latest"
+        DOCKER_HUB_USER  = "cnwsb777"
     }
 
     stages {
@@ -45,6 +52,8 @@ pipeline {
                 '''
             }
         }
+
+        
 
     }
 }
