@@ -52,18 +52,14 @@ pipeline {
             }
         }
 
-        stage('Docker Push') {
+         stage('Push to AWS ECR') {
             steps {
-                withCredentials([string(credentialsId: 'docker-hub-token', variable: 'DOCKER_PASSWORD')]) {
-                    sh '''
-                    echo "Logging in to Docker Hub..."
-                    echo "$DOCKER_PASSWORD" | docker login -u ${DOCKER_HUB_USER} --password-stdin
-
-                    echo "Pushing image to Docker Hub..."
-                    docker push ${DOCKER_REPO}:${DOCKER_TAG}
-                    '''
-                }
+                sh '''
+                echo "Pushing Docker image to AWS ECR..."
+                docker push ${ECR_URI}
+                '''
             }
         }
+        }
     }
-}
+
