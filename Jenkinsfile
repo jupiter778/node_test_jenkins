@@ -41,7 +41,7 @@ pipeline {
 
         stage('Login to GHCR') {
             steps {
-                withCredentials([string(credentialsId: 'token-aws', variable: 'GHCR_TOKEN')]) {
+                withCredentials([string(credentialsId: 'GitHub-Credentials', variable: 'GHCR_TOKEN')]) {
                     sh '''
                     echo $GHCR_TOKEN | docker login ghcr.io -u ${GHCR_USER} --password-stdin
                     '''
