@@ -16,7 +16,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git credentialsId: 'token-aws',
+                git credentialsId: 'token-github',
                     url: "${REPO_URL}",
                     branch: 'main'
             }
