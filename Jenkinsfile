@@ -2,50 +2,60 @@ pipeline {
     agent any
 
     environment {
-        // ต้องเปลี่ยนค่าเหล่านี้:
-        GITHUB_USERNAME = 'jupiter778'
-        GITHUB_REPO = 'node_test_jenkins'
-        GHCR_CREDENTIALS_ID = 'token-github'
-        
-        // ตัวแปรที่ใช้ร่วมกัน
-        GHCR_REGISTRY = 'ghcr.io'
-        IMAGE_FULL_NAME = "${GHCR_REGISTRY}/${GITHUB_USERNAME}/${GITHUB_REPO}"
-        CI = 'true'
+        REPO_URL         = "https://github.com/jupiter778/node_test_jenkins.git"
+
+        LOCAL_IMAGE_NAME = "myapp"
+        LOCAL_TAG        = "latest"
+
+        GHCR_USER        = "jupiter778"
+        GHCR_REPO        = "node_test_jenkins"
+        GHCR_IMAGE       = "ghcr.io/${GHCR_USER}/${GHCR_REPO}:${LOCAL_TAG}"
     }
 
     stages {
-        stage('Install & Test') {
+
+        stage('Checkout Code') {
             steps {
-                sh 'npm install' 
+                git credentialsId: 'token-aws',
+                    url: "${REPO_URL}",
+                    branch: 'main'
             }
         }
 
-        stage('Build Image') {
+        stage('Docker Build') {
             steps {
-                // Build และ Tag ด้วย Build Number และ Latest
-                sh "docker build -t ${IMAGE_FULL_NAME}:${env.BUILD_NUMBER} ."
-                sh "docker tag ${IMAGE_FULL_NAME}:${env.BUILD_NUMBER} ${IMAGE_FULL_NAME}:latest"
+                sh '''
+                echo "Building Docker Image..."
+                docker build -t ${LOCAL_IMAGE_NAME}:${LOCAL_TAG} .
+                '''
             }
         }
-        
-        stage('Push to GHCR') {
+
+        stage('Tag Image') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: "${env.GHCR_CREDENTIALS_ID}", passwordVariable: 'GHCR_TOKEN', usernameVariable: 'GHCR_USER'
-                )]) {
-                    // Login, Push
-                    sh "echo ${GHCR_TOKEN} | docker login ${GHCR_REGISTRY} -u ${GHCR_USER} --password-stdin"
-                    sh "docker push ${IMAGE_FULL_NAME}:${env.BUILD_NUMBER}"
-                    sh "docker push ${IMAGE_FULL_NAME}:latest"
-                    // docker logout ถูกตัดออกเพื่อความเรียบง่าย
+                sh '''
+                docker tag ${LOCAL_IMAGE_NAME}:${LOCAL_TAG} ${GHCR_IMAGE}
+                '''
+            }
+        }
+
+        stage('Login to GHCR') {
+            steps {
+                withCredentials([string(credentialsId: 'ghcr-token', variable: 'GHCR_TOKEN')]) {
+                    sh '''
+                    echo $GHCR_TOKEN | docker login ghcr.io -u ${GHCR_USER} --password-stdin
+                    '''
                 }
             }
         }
-    }
 
-    post {
-        always {
-            cleanWs() /
+        stage('Push to GHCR') {
+            steps {
+                sh '''
+                docker push ${GHCR_IMAGE}
+                '''
+            }
         }
+
     }
 }
