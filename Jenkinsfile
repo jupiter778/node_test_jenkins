@@ -64,29 +64,6 @@ pipeline {
                 '''
             }
         }
+     } 
+ }
 
-        stage('Tag Image for Docker Hub') {
-            steps {
-                sh '''
-                echo "Tagging image for Docker Hub..."
-                docker tag ${LOCAL_IMAGE_NAME}:${LOCAL_TAG} ${DOCKER_REPO}:${DOCKER_TAG}
-                '''
-            }
-        }
-
-        stage('Push to Docker Hub') {
-            steps {
-                withCredentials([string(credentialsId: 'docker-hub-token', variable: 'DOCKER_PASSWORD')]) {
-                    sh '''
-                    echo "Logging in to Docker Hub..."
-                    echo "$DOCKER_PASSWORD" | docker login -u ${DOCKER_HUB_USER} --password-stdin
-
-                    echo "Pushing Docker image to Docker Hub..."
-                    docker push ${DOCKER_REPO}:${DOCKER_TAG}
-                    '''
-                }
-            }
-        }
-
-    }
-}
