@@ -43,7 +43,7 @@ pipeline {
     steps {
         withCredentials([
             usernamePassword(
-                credentialsId: 'token-github-classic',
+                credentialsId: 'credentials-jenkins',
                 usernameVariable: 'GH_USER',
                 passwordVariable: 'GH_TOKEN'
             )
