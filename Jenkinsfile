@@ -16,7 +16,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git credentialsId: 'token-github',
+                git credentialsId: 'token-github-classic',
                     url: "${REPO_URL}",
                     branch: 'main'
             }
@@ -43,7 +43,7 @@ pipeline {
     steps {
         withCredentials([
             usernamePassword(
-                credentialsId: 'token-github',
+                credentialsId: 'token-github-classic',
                 usernameVariable: 'GH_USER',
                 passwordVariable: 'GH_TOKEN'
             )
