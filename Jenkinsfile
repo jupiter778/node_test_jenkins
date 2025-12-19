@@ -10,6 +10,10 @@ pipeline {
         GHCR_USER  = "jupiter778"
         GHCR_REPO  = "node_test_jenkins"
         GHCR_IMAGE = "ghcr.io/${GHCR_USER}/${GHCR_REPO}:${LOCAL_TAG}"
+
+        ECS_CLUSTER = "lovable-shark-jxuzst"
+        ECS_SERVICE = "node-test-service"
+        AWS_DEFAULT_REGION = "ap-southeast-1"
     }
 
     stages {
@@ -66,8 +70,11 @@ pipeline {
         stage('Deploy to ECS') {
             steps {
                 sh '''
-                    aws ecs update-service ...
-                '''
+            aws ecs update-service \
+              --cluster ${ECS_CLUSTER} \
+              --service ${ECS_SERVICE} \
+              --force-new-deployment
+        '''
             }
         }
     }
