@@ -2,18 +2,12 @@ pipeline {
     agent any
 
     environment {
+        // Git Repository
         REPO_URL = "https://github.com/jupiter778/node_test_jenkins.git"
 
-        LOCAL_IMAGE_NAME = "myapp"
-        LOCAL_TAG        = "latest"
-
-        GHCR_USER  = "jupiter778"
-        GHCR_REPO  = "node_test_jenkins"
-        GHCR_IMAGE = "ghcr.io/${GHCR_USER}/${GHCR_REPO}:${LOCAL_TAG}"
-
-        ECS_CLUSTER = "lovable-shark-jxuzst"
-        ECS_SERVICE = "node-test-service"
-        AWS_DEFAULT_REGION = "ap-southeast-1"
+        // Kubernetes
+        K8S_NAMESPACE = "default"
+        K8S_DEPLOYMENT_PATH = "k8s/deployment.yaml"
     }
 
     stages {
@@ -26,54 +20,23 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
+        stage('Deploy to Kubernetes') {
             steps {
                 sh '''
-                    echo "Building Docker Image..."
-                    docker build -t ${LOCAL_IMAGE_NAME}:${LOCAL_TAG} .
+                    echo "Deploying application to Kubernetes..."
+                    kubectl apply -f ${K8S_DEPLOYMENT_PATH} -n ${K8S_NAMESPACE}
                 '''
             }
         }
 
-        stage('Tag Image') {
+        stage('Verify Deployment') {
             steps {
                 sh '''
-                    docker tag ${LOCAL_IMAGE_NAME}:${LOCAL_TAG} ${GHCR_IMAGE}
-                '''
-            }
-        }
+                    echo "Checking Pods status..."
+                    kubectl get pods -n ${K8S_NAMESPACE}
 
-        stage('Login to GHCR') {
-            steps {
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'credentials-jenkins',
-                        usernameVariable: 'GH_USER',
-                        passwordVariable: 'GH_TOKEN'
-                    )
-                ]) {
-                    sh '''
-                        echo "$GH_TOKEN" | docker login ghcr.io -u "$GH_USER" --password-stdin
-                    '''
-                }
-            }
-        }
-
-        stage('Push to GHCR') {
-            steps {
-                sh '''
-                    docker push ${GHCR_IMAGE}
-                '''
-            }
-        }
-
-        stage('Deploy to ECS') {
-            steps {
-                sh '''
-                    aws ecs update-service \
-                      --cluster ${ECS_CLUSTER} \
-                      --service ${ECS_SERVICE} \
-                      --force-new-deployment
+                    echo "Checking Deployment status..."
+                    kubectl rollout status deployment/node-test-app -n ${K8S_NAMESPACE}
                 '''
             }
         }
