@@ -2,12 +2,9 @@ pipeline {
     agent any
 
     environment {
-        // Git Repository
         REPO_URL = "https://github.com/jupiter778/node_test_jenkins.git"
-
-        // Kubernetes
         K8S_NAMESPACE = "default"
-        K8S_DEPLOYMENT_PATH = "k8s/deployment.yaml"
+        K8S_DEPLOYMENT_PATH = "k8s\\deployment.yaml"
     }
 
     stages {
@@ -22,22 +19,22 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh '''
-                    echo "Deploying application to Kubernetes..."
-                    kubectl apply -f ${K8S_DEPLOYMENT_PATH} -n ${K8S_NAMESPACE}
-                '''
+                bat """
+                    echo Deploying application to Kubernetes...
+                    kubectl apply -f %K8S_DEPLOYMENT_PATH% -n %K8S_NAMESPACE%
+                """
             }
         }
 
         stage('Verify Deployment') {
             steps {
-                sh '''
-                    echo "Checking Pods status..."
-                    kubectl get pods -n ${K8S_NAMESPACE}
+                bat """
+                    echo Checking Pods status...
+                    kubectl get pods -n %K8S_NAMESPACE%
 
-                    echo "Checking Deployment status..."
-                    kubectl rollout status deployment/node-test-app -n ${K8S_NAMESPACE}
-                '''
+                    echo Checking Deployment rollout...
+                    kubectl rollout status deployment/node-test-app -n %K8S_NAMESPACE%
+                """
             }
         }
     }
