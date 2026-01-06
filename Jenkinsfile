@@ -27,55 +27,27 @@ pipeline {
         }
 
         stage('Docker Build') {
-            steps {
-                sh '''
-                    echo "Building Docker Image..."
-                    docker build -t ${LOCAL_IMAGE_NAME}:${LOCAL_TAG} .
-                '''
-            }
-        }
+    steps {
+        bat """
+          docker build -t %LOCAL_IMAGE_NAME%:%LOCAL_TAG% .
+        """
+    }
+}
 
-        stage('Tag Image') {
-            steps {
-                sh '''
-                    docker tag ${LOCAL_IMAGE_NAME}:${LOCAL_TAG} ${GHCR_IMAGE}
-                '''
-            }
-        }
+stage('Tag Image') {
+    steps {
+        bat """
+          docker tag %LOCAL_IMAGE_NAME%:%LOCAL_TAG% %GHCR_IMAGE%
+        """
+    }
+}
 
-        stage('Login to GHCR') {
-            steps {
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'credentials-jenkins',
-                        usernameVariable: 'GH_USER',
-                        passwordVariable: 'GH_TOKEN'
-                    )
-                ]) {
-                    sh '''
-                        echo "$GH_TOKEN" | docker login ghcr.io -u "$GH_USER" --password-stdin
-                    '''
-                }
-            }
-        }
-
-        stage('Push to GHCR') {
-            steps {
-                sh '''
-                    docker push ${GHCR_IMAGE}
-                '''
-            }
-        }
-
-        stage('Deploy to ECS') {
-            steps {
-                sh '''
-            aws ecs update-service \
-              --cluster ${ECS_CLUSTER} \
-              --service ${ECS_SERVICE} \
-              --force-new-deployment
-        '''
-            }
-        }
+stage('Push to GHCR') {
+    steps {
+        bat """
+          docker push %GHCR_IMAGE%
+        """
+    }
+}
     }
 }
