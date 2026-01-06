@@ -67,15 +67,13 @@ pipeline {
             }
         }
 
-        stage('Deploy to ECS') {
-            steps {
-                sh '''
-            aws ecs update-service \
-              --cluster ${ECS_CLUSTER} \
-              --service ${ECS_SERVICE} \
-              --force-new-deployment
+        stage('Deploy to Kubernetes') {
+    steps {
+        sh '''
+          echo "Deploying to Kubernetes..."
+          kubectl apply -f k8s/deployment.yaml
         '''
-            }
-        }
+    }
+}
     }
 }
