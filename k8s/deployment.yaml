@@ -12,6 +12,8 @@ spec:
       labels:
         app: node-test
     spec:
+      imagePullSecrets:
+      - name: ghcr-secret
       containers:
       - name: app
         image: ghcr.io/jupiter778/node_test_jenkins:latest
