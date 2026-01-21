@@ -26,7 +26,7 @@ pipeline {
         sh '''
           docker stop my-app || true
           docker rm my-app || true
-          docker run -d -p 8080:3000 --name my-app my-app:${BUILD_NUMBER}
+          docker run -d -p 8082:3000 --name my-app my-app:${BUILD_NUMBER}
         '''
       }
     }
